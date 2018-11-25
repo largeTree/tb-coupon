@@ -5,7 +5,7 @@ import FastClick from 'fastclick'
 import VueRouter from 'vue-router'
 import App from './App'
 
-import { AjaxPlugin, XHeader } from 'vux'
+import { AjaxPlugin, XHeader, ViewBox  } from 'vux'
 
 import Home from './components/Home'
 import Recommend from './components/Recommend'
@@ -15,6 +15,8 @@ import SearchResult from './components/subpages/SearchResult'
 Vue.use(VueRouter)
 Vue.use(AjaxPlugin)
 Vue.component('x-header', XHeader)
+Vue.component('view-box', ViewBox)
+
 
 const routes = [{
     name: 'tabs.Home',

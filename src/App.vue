@@ -1,7 +1,7 @@
 <template>
-  <div id="app">
+  <div id="app" style="height:100%">
     <router-view></router-view>
-    <tabbar v-if="showTabbar" style="position:fixed">
+    <tabbar v-if="showTabbar">
       <tabbar-item selected link="/">
         <img slot="icon" src="./assets/logo.png">
         <span slot="label">首页</span>

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import HttpService from '../../javascripts/HttpService';
+import { HttpService } from '../../javascripts/HttpService';
 export default {
     data () {
         return {
@@ -20,12 +20,7 @@ export default {
         }
     },
     created : function() {
-        HttpService.post('api/searchresult/bySearchId?searchId=' + this.$route.query.id, {
-            pageNo:1,
-            pageSize:20
-        }).then(function(data){
-            console.log(data);
-        });
+        
     }
 }
 </script>
