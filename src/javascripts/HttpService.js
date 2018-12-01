@@ -1,15 +1,16 @@
 import $ from "jquery";
 
-let HttpService =  {
-    _baseUrl: 'http://127.0.0.1:8081/',
-    _timeout: 3000,
+const _baseUrl = 'http://127.0.0.1:8081/';
+const _timeout = 3000;
+
+export default {
     post(url, params) {
         return new Promise(function(resolve, reject) {
             $.ajax({
-                url: HttpService._baseUrl + url,
+                url: _baseUrl + url,
                 data: params,
                 type: 'post',
-                timeout: HttpService._timeout,
+                timeout: _timeout,
                 success: function(data) {
                     resolve(data);
                 },
@@ -20,5 +21,3 @@ let HttpService =  {
         });
     }
 }
-
-export { HttpService };
