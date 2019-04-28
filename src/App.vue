@@ -6,10 +6,10 @@
         <img slot="icon" src="./assets/logo.png">
         <span slot="label">首页</span>
       </tabbar-item>
-      <tabbar-item link="/tabs/recommend">
+      <!-- <tabbar-item link="/tabs/recommend">
         <img slot="icon" src="./assets/logo.png">
         <span slot="label">推荐</span>
-      </tabbar-item>
+      </tabbar-item> -->
       <tabbar-item link="/tabs/mine">
         <img slot="icon" src="./assets/logo.png">
         <span slot="label">我的</span>
