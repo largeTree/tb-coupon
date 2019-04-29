@@ -9,6 +9,9 @@ export default {
         return {
             title : '这是我的页面'
         }
+    },
+    methods() {
+        
     }
 }
 </script>

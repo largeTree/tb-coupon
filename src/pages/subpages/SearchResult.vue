@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { HttpService } from '../../javascripts/HttpService';
+import { HttpService } from '../../services/HttpService';
 export default {
     data () {
         return {

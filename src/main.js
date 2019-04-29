@@ -7,10 +7,10 @@ import App from './App'
 
 import { AjaxPlugin, XHeader, ViewBox  } from 'vux'
 
-import Home from './components/Home'
-import Recommend from './components/Recommend'
-import Mine from './components/Mine'
-import SearchResult from './components/subpages/SearchResult'
+import Home from './pages/Home'
+import Recommend from './pages/Recommend'
+import Mine from './pages/Mine'
+import SearchResult from './pages/subpages/SearchResult'
 
 Vue.use(VueRouter)
 Vue.use(AjaxPlugin)
