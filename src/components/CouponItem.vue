@@ -1,5 +1,5 @@
 <template>
-  <div class="coupon-item-content">
+  <div class="coupon-item-content" @click="onTouch">
     <div v-if="item.pictUrl" class="coupon-img-container">
       <img :src="item.pictUrl" class="coupon-img">
     </div>
@@ -7,10 +7,11 @@
       <nobr>
         <h4 class="coupon-title">{{item.title}}</h4>
       </nobr>
-      <span class="coupon-label">
-          {{item.couponInfo}}
+      <span class="coupon-label">{{item.couponInfo}}</span>
+      <span class="coupon-price">
+        到手约
+        <span>￥{{item.zkFinalPrice}}</span>
       </span>
-      <span class="coupon-price">到手约<span>￥{{item.zkFinalPrice}}</span></span>
     </div>
   </div>
 </template>
@@ -18,7 +19,15 @@
 export default {
   name: "coupon-item",
   props: {
-    item: Object
+    item: Object,
+    onItemClick: Function
+  },
+  methods: {
+    onTouch() {
+      if (this.onItemClick) {
+        this.onItemClick(this.item);
+      }
+    }
   }
 };
 </script>
@@ -43,25 +52,25 @@ export default {
 }
 .coupon-title {
   font-weight: 500;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .coupon-label {
-    color: red;
-    font-size: 0.5em;
-    font-weight: 500;
-    background-color: #FFE4E1;
-    padding: 2px 5px;
-    border-radius: 5px;
+  color: red;
+  font-size: 0.5em;
+  font-weight: 500;
+  background-color: #ffe4e1;
+  padding: 2px 5px;
+  border-radius: 5px;
 }
 .coupon-price {
-    display: block;
-    color: #BDBDBD;
-    font-size: 12px;
-    margin-top: 5px;
+  display: block;
+  color: #bdbdbd;
+  font-size: 12px;
+  margin-top: 5px;
 }
 .coupon-price span {
-    color: red;
-    font-size: 14px;
+  color: red;
+  font-size: 14px;
 }
 </style>

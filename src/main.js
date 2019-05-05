@@ -5,15 +5,23 @@ import FastClick from 'fastclick'
 import VueRouter from 'vue-router'
 import App from './App'
 
-import { AjaxPlugin, XHeader, ViewBox  } from 'vux'
+import { AjaxPlugin, XHeader, ViewBox, ConfirmPlugin, AlertPlugin } from 'vux'
+import VueScroller from 'vue-scroller'
+import VueClipboard from 'vue-clipboard2'
 
 import Home from './pages/Home'
 import Recommend from './pages/Recommend'
 import Mine from './pages/Mine'
 import SearchResult from './pages/subpages/SearchResult'
+import CouponDetail from './pages/subpages/CouponDetail'
 
 Vue.use(VueRouter)
 Vue.use(AjaxPlugin)
+Vue.use(VueScroller)
+Vue.use(ConfirmPlugin)
+Vue.use(AlertPlugin)
+VueClipboard.config.autoSetContainer = true;
+Vue.use(VueClipboard)
 Vue.component('x-header', XHeader)
 Vue.component('view-box', ViewBox)
 
@@ -34,6 +42,10 @@ const routes = [{
     name: 'SearchResult',
     path: '/searchresult',
     component: SearchResult
+}, {
+    name: 'CouponDetail',
+    path: '/coupondetail',
+    component: CouponDetail
 }]
 
 const router = new VueRouter({

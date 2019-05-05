@@ -1,6 +1,8 @@
 <template>
   <div id="app" style="height:100%">
-    <router-view></router-view>
+    <keep-alive exclude="coupon-detail">
+      <router-view></router-view>
+    </keep-alive>
     <tabbar v-if="showTabbar">
       <tabbar-item selected link="/">
         <img slot="icon" src="./assets/logo.png">
@@ -10,10 +12,10 @@
         <img slot="icon" src="./assets/logo.png">
         <span slot="label">推荐</span>
       </tabbar-item> -->
-      <tabbar-item link="/tabs/mine">
+      <!-- <tabbar-item link="/tabs/mine">
         <img slot="icon" src="./assets/logo.png">
         <span slot="label">我的</span>
-      </tabbar-item>
+      </tabbar-item> -->
     </tabbar>
   </div>
 </template>
