@@ -80,8 +80,8 @@ export default {
     onSubmit() {
       this.$router.push({
         name: "SearchResult",
-        params: {
-          searchToken: this.searchToken
+        query: {
+          q: this.searchToken
         }
       });
     },

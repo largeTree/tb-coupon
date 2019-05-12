@@ -1,8 +1,14 @@
 <template>
   <div class="body">
-    <x-header :left-options="{preventGoBack:true}" @on-click-back="clickBack">{{title}}</x-header>
+    <x-header :left-options="{preventGoBack:true}" @on-click-back="clickBack">{{title || '标题'}}</x-header>
     <view-box :body-padding-top="46" :body-padding-bottom="50">
-      <scroller ref="myscroller" style="bottom: 50px" height="90%" :on-refresh="refresh" :on-infinite="infinite">
+      <scroller
+        ref="myscroller"
+        style="bottom: 50px"
+        height="90%"
+        :on-refresh="refresh"
+        :on-infinite="infinite"
+      >
         <coupon-item
           :item="item"
           v-for="item in couponData.rows"
@@ -17,13 +23,15 @@
 <script>
 import CouponItem from "../../components/CouponItem";
 import { MyHttpService } from "../../services/HttpService";
+import NumberUtils from "../../services/NumberUtils";
+
 export default {
   components: {
     CouponItem
   },
   data() {
     return {
-      title: "标题",
+      title: "",
       couponData: {
         rows: [],
         maxPageNo: null,
@@ -34,7 +42,9 @@ export default {
   },
   methods: {
     clickBack: function() {
-      this.$router.go(-1);
+      this.$router.push({
+        path: "/"
+      });
     },
     couponItemClick(itemData) {
       this.$router.push({
@@ -49,10 +59,15 @@ export default {
       pageSize = pageSize || 20;
       this.couponData.loading = true;
       return MyHttpService.post("/api.do", {
-        apiKey: "mp-taobao-findCoupon",
-        q: this.title,
-        pageNo: pageNo,
-        pageSize: pageSize
+        apiKey: "mp-common-call-tb-api",
+        tbKey: "taobao.tbk.dg.material.optional",
+        platform: "2",
+        jsonParam: {
+          q: this.title,
+          sort: "tk_total_commi_desc",
+          pageNo: pageNo,
+          pageSize: pageSize
+        }
       }).then(
         data => {
           if (pageNo == 1) {
@@ -62,6 +77,12 @@ export default {
           var idx = this.couponData.rows.length;
           for (var i = 0; i < data.rows.length; i++) {
             var row = data.rows[i];
+            if (row.couponId) {
+              row.afterPrice = NumberUtils.sub(
+                row.zkFinalPrice,
+                row.couponAmount
+              );
+            }
             row._idx = idx + i;
             this.couponData.rows.push(row);
           }
@@ -88,7 +109,6 @@ export default {
         });
         return;
       }
-      this.couponData.rows = [];
       this.loadCoupon(1, 20).then(data => {
         setTimeout(() => {
           done();
@@ -119,15 +139,16 @@ export default {
     }
   },
   created: function() {
-    if (this.$route.params.searchToken) {
-      this.title = this.$route.params.searchToken;
+    if (this.$route.query.q) {
+      this.title = this.$route.query.q;
     }
   },
   activated() {
-    // 判断一下searchToken是否发生变更，如有变更，清理数据，重新加载
-    if (this.$route.params.searchToken && this.$route.params.searchToken !== this.title) {
+    console.log(this.$router);
+    // 判断一下q是否发生变更，如有变更，清理数据，重新加载
+    if (this.$route.query.q && this.$route.query.q !== this.title) {
       this.couponData.rows = [];
-      this.title = this.$route.params.searchToken;
+      this.title = this.$route.query.q;
       this.loadCoupon(1, 20);
     }
     if (this.lastPosition) {
