@@ -7,10 +7,10 @@
       <nobr>
         <h4 class="coupon-title">{{item.title}}</h4>
       </nobr>
-      <span class="coupon-label">{{item.couponInfo}}</span>
+      <span class="coupon-label" v-show="this.item.couponId" >{{item.couponInfo}}</span>
       <span class="coupon-price">
         到手约
-        <span>￥{{item.zkFinalPrice}}</span>
+        <span>￥{{item.afterPrice || item.zkFinalPrice}}</span>
       </span>
     </div>
   </div>

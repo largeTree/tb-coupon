@@ -22,14 +22,14 @@
         <!-- 滚动图 -->
         <!-- <swiper loop auto :list="swiperList"></swiper> -->
 
-        <divider>券分类</divider>
+        <!-- <divider>券分类</divider> -->
 
         <!-- 九宫格 -->
-        <grid :cols="4" class="spu-clz-grid">
+        <!-- <grid :cols="4" class="spu-clz-grid">
           <grid-item :label="'九宫格'" v-for="i in 8" :key="i">
             <img slot="icon" src="../assets/vux_logo.png">
           </grid-item>
-        </grid>
+        </grid> -->
 
         <divider>精选券</divider>
 
@@ -50,6 +50,7 @@ import { Divider, Swiper, Search, Grid, GridItem, Card, XImg } from "vux";
 import CouponItem from "../components/CouponItem";
 import FloatBtn from "../components/FLoatBtn";
 import { MyHttpService } from "../services/HttpService";
+import NumberUtils from "../services/NumberUtils";
 import { setTimeout } from "timers";
 
 export default {
@@ -97,11 +98,15 @@ export default {
       pageSize = pageSize || 20;
       this.couponData.loading = true;
       return MyHttpService.post("/api.do", {
-        apiKey: "mp-taobao-findCoupon",
+        apiKey: "mp-common-call-tb-api",
+        tbKey: "taobao.tbk.dg.material.optional",
         platform: "2",
-        q: "精选 裙 仙女 少女",
-        pageNo: pageNo,
-        pageSize: pageSize
+        jsonParam: {
+          q: "裙子",
+          sort: "tk_total_commi_desc",
+          pageNo: pageNo,
+          pageSize: pageSize
+        }
       }).then(
         data => {
           if (pageNo == 1) {
@@ -111,6 +116,12 @@ export default {
           var idx = this.couponData.rows.length;
           for (var i = 0; i < data.rows.length; i++) {
             var row = data.rows[i];
+            if (row.couponId) {
+              row.afterPrice = NumberUtils.sub(
+                row.zkFinalPrice,
+                row.couponAmount
+              );
+            }
             row._idx = idx + i;
             this.couponData.rows.push(row);
           }

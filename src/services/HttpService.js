@@ -37,11 +37,16 @@ export var MyHttpService = {
         return this.ajax(url, {}, 'get');
     },
     ajax(url, params, method, timeout) {
+        if (params && params.jsonParam) {
+            params.jsonParam = JSON.stringify(params.jsonParam);
+        }
         return new Promise(function (resolve, reject) {
             $.ajax({
                 url: _globalConfig._baseUrl + url,
                 data: params,
                 type: method,
+                dataType: 'json',
+                contentType: 'application/x-www-form-urlencoded',
                 timeout: timeout || _timeout,
                 success: function (data, status, xhr) {
                     // 网络成功，且业务成功时才调用成功方法

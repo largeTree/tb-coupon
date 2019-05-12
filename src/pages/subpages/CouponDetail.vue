@@ -12,17 +12,19 @@
       <div class="shop-info">店铺:{{this.goodsInfo.nick}}</div>
       <div class="price-container">
         <div class="final-price">
-          到手价约
-          <span>￥{{this.goodsInfo.zkFinalPrice}}</span>
-          &nbsp;&nbsp;
           <del>原价￥{{this.goodsInfo.reservePrice}}</del>
+          &nbsp;&nbsp;
+          <del>现价￥{{this.goodsInfo.zkFinalPrice}}</del>
+          &nbsp;&nbsp;
+          用券后约
+          <span>￥{{this.goodsInfo.afterPrice || this.goodsInfo.zkFinalPrice}}</span>
         </div>
       </div>
       <div class="vp-container">
         <div class="volume">月销量{{this.goodsInfo.volume}}件</div>
         <div class="provcity">{{this.goodsInfo.provcity}}</div>
       </div>
-      <div class="coupon-info">
+      <div class="coupon-info" v-show="couponData.couponId">
         <span>{{this.couponData.couponInfo}}券</span>
       </div>
     </div>
@@ -37,6 +39,7 @@
 <script>
 import { Swiper, Divider, XButton } from "vux";
 import { MyHttpService } from "../../services/HttpService";
+import NumberUtils from "../../services/NumberUtils";
 
 export default {
   name: "coupon-detail",
@@ -72,27 +75,40 @@ export default {
             });
           }
         }
+
+        if (this.couponData.couponId) {
+          this.goodsInfo.afterPrice = NumberUtils.sub(
+            this.couponData.zkFinalPrice,
+            this.couponData.couponAmount
+          );
+        }
         this.loadFinish = true;
       });
     },
     getCouponPwd() {
       var _this = this;
+      var url;
+      if (this.couponData.couponId) {
+        url = this.couponData.couponShareUrl;
+      } else {
+        url = this.couponData.url;
+      }
+      if (url.startsWith("//")) {
+        url = "https:" + url;
+      }
       MyHttpService.doApi("mp-taobao-createPwd", {
-        url: this.couponData.couponClickUrl,
+        url: url,
         text: this.goodsInfo.title,
         logo: this.goodsInfo.pictUrl
       }).then(data => {
         var pwd = data.data.val;
         var content =
-          _this.goodsInfo.title +
-          "<br />" +
-          _this.goodsInfo.nick +
-          "<br />" +
-          _this.couponData.couponInfo +
-          "<br />" +
-          pwd +
-          "<br />" +
-          "复制这段文字，打开手机淘宝领取优惠券";
+          _this.goodsInfo.title + "<br />" + _this.goodsInfo.nick + "<br />";
+        if (_this.couponData.couponId) {
+          content = content + _this.couponData.couponInfo + "<br />";
+        }
+        content =
+          content + pwd + "<br />" + "复制这段文字，打开手机淘宝领取优惠券";
         this.$vux.confirm.show({
           title: "优惠券",
           content: content,
