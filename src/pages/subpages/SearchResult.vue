@@ -16,6 +16,7 @@
           :on-item-click="couponItemClick"
         ></coupon-item>
       </scroller>
+      <float-btn :on-click="floatBtnClick"></float-btn>
     </view-box>
   </div>
 </template>
@@ -24,10 +25,12 @@
 import CouponItem from "../../components/CouponItem";
 import { MyHttpService } from "../../services/HttpService";
 import NumberUtils from "../../services/NumberUtils";
+import FloatBtn from "../../components/FLoatBtn";
 
 export default {
   components: {
-    CouponItem
+    CouponItem,
+    FloatBtn
   },
   data() {
     return {
@@ -45,6 +48,14 @@ export default {
       this.$router.push({
         path: "/"
       });
+    },
+    floatBtnClick() {
+      // 这个组件似乎有问题，启用动画的情况下一定要先等到动画完全停止之后才能滚动到指定位置，先设置一次使动画停止，再滚动到指定位置
+      this.$refs.myscroller.scrollTo(0, 0, true);
+      setTimeout(() => {
+        this.$refs.myscroller.scrollTo(0, 0, true);
+        console.log(this.$refs.myscroller.getPosition());
+      }, 50);
     },
     couponItemClick(itemData) {
       this.$router.push({
@@ -65,6 +76,7 @@ export default {
         jsonParam: {
           q: this.title,
           sort: "tk_total_commi_desc",
+          hasCoupon : 'true',
           pageNo: pageNo,
           pageSize: pageSize
         }

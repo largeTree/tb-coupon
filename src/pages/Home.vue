@@ -86,7 +86,7 @@ export default {
       });
     },
     floatBtnClick() {
-      // 这个组件似乎有问题，启用动画的情况下一定要有间隔的调用两次scorellTo，才滚动到指定位置
+      // 这个组件似乎有问题，启用动画的情况下一定要先等到动画完全停止之后才能滚动到指定位置，先设置一次使动画停止，再滚动到指定位置
       this.$refs.myscroller.scrollTo(0, 0, true);
       setTimeout(() => {
         this.$refs.myscroller.scrollTo(0, 0, true);
@@ -102,8 +102,9 @@ export default {
         tbKey: "taobao.tbk.dg.material.optional",
         platform: "2",
         jsonParam: {
-          q: "裙子",
+          q:'女装 裙子 仙女',
           sort: "tk_total_commi_desc",
+          hasCoupon : 'true',
           pageNo: pageNo,
           pageSize: pageSize
         }
@@ -121,6 +122,7 @@ export default {
                 row.zkFinalPrice,
                 row.couponAmount
               );
+              row.remainCount = Math.ceil(NumberUtils.div(row.couponRemainCount, 100));
             }
             row._idx = idx + i;
             this.couponData.rows.push(row);
@@ -187,6 +189,7 @@ export default {
     this.lastPosition = this.$refs.myscroller.getPosition();
   },
   activated() {
+    this.searchToken = '';
     if (this.lastPosition) {
       setTimeout(() => {
         this.$refs.myscroller.scrollTo(
@@ -203,7 +206,9 @@ export default {
 <style>
 .body {
   height: 100%;
-  background-color: #f0f0f0;
+  background: #f5f5f5;
+  font-size: 14px;
+  line-height: 1.8;
 }
 .spu-clz-grid {
   border-bottom: 1px #d9d9d9 solid;
