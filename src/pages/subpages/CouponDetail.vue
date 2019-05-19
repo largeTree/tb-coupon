@@ -5,29 +5,46 @@
       @on-click-back="clickBack"
     >{{this.couponData.title}}</x-header>
 
-    <!-- 商品图片滚动图 -->
-    <swiper :aspect-ratio="0.6" v-if="loadFinish" loop auto :list="goodsInfo.swiperImgList"></swiper>
-    <div class="item-det-info">
-      <h3>{{this.goodsInfo.title}}</h3>
-      <div class="shop-info">店铺:{{this.goodsInfo.nick}}</div>
-      <div class="price-container">
-        <div class="final-price">
-          <del>原价￥{{this.goodsInfo.reservePrice}}</del>
-          &nbsp;&nbsp;
-          <del>现价￥{{this.goodsInfo.zkFinalPrice}}</del>
-          &nbsp;&nbsp;
-          用券后约
-          <span>￥{{this.goodsInfo.afterPrice || this.goodsInfo.zkFinalPrice}}</span>
+    <view-box :body-padding-top="46" :body-padding-bottom="50">
+      <scroller ref="myscroller" height="85%">
+        <!-- 商品图片滚动图 -->
+        <swiper :aspect-ratio="1" v-if="loadFinish" loop auto :list="this.couponData.swiperImgList"></swiper>
+        <div class="item-det-info">
+          <p class="det-item-title">{{this.couponData.title}}</p>
+          <div class="price-container">
+            <!-- 优惠券天猫图标 -->
+            <p class="icon-list">
+              <span v-show="this.couponData.couponId" class="det-coupon-amount-tag p-icon">
+                <span class="det-coupon-amount-price">{{this.couponData.couponAmount}}元</span>
+              </span>
+              <span v-show="this.couponData.userType == 1" class="det-tmall-icon p-icon"></span>
+              <!-- <span class="postfee-icon p-icon">包邮</span> -->
+            </p>
+            <div v-show="!this.couponData.couponId" class="final-price">
+              <del>原价￥{{this.couponData.reservePrice}}</del>
+              &nbsp;&nbsp;
+              现价
+              <span>￥{{this.couponData.afterPrice || this.couponData.zkFinalPrice}}</span>
+            </div>
+
+            <div v-show="this.couponData.couponId" class="final-price">
+              <del>原价￥{{this.couponData.zkFinalPrice}}</del>
+              &nbsp;&nbsp;
+              用券后约
+              <span>￥{{this.couponData.afterPrice || this.couponData.zkFinalPrice}}</span>
+            </div>
+          </div>
+          <div class="det-other-info">
+            <p>券有效期：{{this.couponData.couponStartTime}} / {{this.couponData.couponEndTime}}</p>
+            <p>券剩余：{{this.couponData.couponRemainCount}}/{{this.couponData.couponTotalCount}}</p>
+            <p class="det-float-right">店铺评分：{{this.couponData.shopDsr}}</p>
+            <p>店铺：{{this.couponData.nick}}</p>
+            <p class="det-float-right">{{this.couponData.provcity}}</p>
+            <p>月销量{{this.couponData.volume}}件</p>
+          </div>
         </div>
-      </div>
-      <div class="vp-container">
-        <div class="volume">月销量{{this.goodsInfo.volume}}件</div>
-        <div class="provcity">{{this.goodsInfo.provcity}}</div>
-      </div>
-      <div class="coupon-info" v-show="couponData.couponId">
-        <span>{{this.couponData.couponInfo}}券</span>
-      </div>
-    </div>
+      </scroller>
+    </view-box>
     <div class="bottom-btn" @click="getCouponPwd">
       <!-- show-loading -->
       <!-- <x-button type="warn" @click.native="getCouponPwd">立即领取</x-button> -->
@@ -59,31 +76,20 @@ export default {
     },
     loadItemData() {
       this.loadFinish = false;
-      MyHttpService.doApi("mp-taobao-getTbkItemInfo", {
-        platform: "2",
-        numIid: this.couponData.numIid
-      }).then(data => {
-        this.goodsInfo = data.data;
-        this.goodsInfo.swiperImgList = new Array();
-        this.goodsInfo.swiperImgList.push({
-          img: this.goodsInfo.pictUrl
-        });
-        if (this.goodsInfo.smallImages) {
-          for (var sImg of this.goodsInfo.smallImages) {
-            this.goodsInfo.swiperImgList.push({
-              img: sImg
-            });
-          }
-        }
-
-        if (this.couponData.couponId) {
-          this.goodsInfo.afterPrice = NumberUtils.sub(
-            this.couponData.zkFinalPrice,
-            this.couponData.couponAmount
-          );
-        }
-        this.loadFinish = true;
+      this.couponData.swiperImgList = [];
+      // 商品主图
+      this.couponData.swiperImgList.push({
+        img: this.couponData.pictUrl
       });
+      if (this.couponData.smallImages) {
+        // 小图列表
+        for (var sImg of this.couponData.smallImages) {
+          this.couponData.swiperImgList.push({
+            img: sImg
+          });
+        }
+      }
+      this.loadFinish = true;
     },
     getCouponPwd() {
       var _this = this;
@@ -98,12 +104,12 @@ export default {
       }
       MyHttpService.doApi("mp-taobao-createPwd", {
         url: url,
-        text: this.goodsInfo.title,
-        logo: this.goodsInfo.pictUrl
+        text: this.couponData.title,
+        logo: this.couponData.pictUrl
       }).then(data => {
         var pwd = data.data.val;
         var content =
-          _this.goodsInfo.title + "<br />" + _this.goodsInfo.nick + "<br />";
+          _this.couponData.title + "<br />" + _this.couponData.nick + "<br />";
         if (_this.couponData.couponId) {
           content = content + _this.couponData.couponInfo + "<br />";
         }
@@ -135,40 +141,50 @@ export default {
     }
   },
   created() {
+    if (!this.couponData) {
+      this.$router.push({
+        path: "/"
+      });
+    }
+  },
+  mounted() {
     this.loadItemData();
   }
 };
 </script>
 
 <style>
+.det-item-title {
+  margin: 0.2rem 0px;
+  line-height: 1.5em;
+  font-weight: 600;
+}
 .body {
   height: 100%;
-  background-color: #f0f0f0;
+  background-color: #f5f5f5;
 }
 .item-det-info {
   padding: 1px 1em;
 }
-.shop-info {
-  margin: 3px 0px;
-}
-.vp-container {
+.det-other-info {
   overflow: hidden;
+  background-color: #ffffff;
+  padding: 0.2rem;
+  border-radius: 0.1rem;
 }
-.volume {
-  float: left;
-}
-.provcity {
+.det-float-right {
   float: right;
 }
-.volume,
-.provcity {
-  color: #cccccc;
-}
 .price-container {
-  margin-top: 2px 0px;
+  margin: 2px 0px;
+  border-radius: 0.1rem;
+  padding: 0.1rem 0px 0px 0.2rem;
   font-size: 14px;
-  color: #cccccc;
   overflow: hidden;
+  background-color: #ffffff;
+}
+.price-container del {
+  color: #cccccc;
 }
 .final-price {
   float: left;
@@ -177,24 +193,38 @@ export default {
   color: red;
   font-size: 20px;
 }
-.coupon-info {
-  letter-spacing: 3px;
-  text-align: center;
-  font-size: 20px;
-  margin: 10px 0px;
-  background-color: #ffa500;
-  border-radius: 0px 21px;
-  padding: 5px 0px;
+.det-coupon-amount-tag {
+  display: inline-block;
+  background: url("../../assets/coupon/coupon.png") no-repeat;
+  background-size: 21px 20px;
+  height: 20px;
+  padding-left: 20px;
 }
-.coupon-info span {
-  color: #ffffff;
+.det-coupon-amount-price {
+  border: 1px solid #fe4800;
+  border-left: none;
+  line-height: 18px;
+  height: 18px;
+  overflow: hidden;
+  display: block;
+  padding: 0 2px;
+  color: #fe4800;
+  margin-bottom: -3px;
+  font-size: 12px;
+}
+.det-tmall-icon {
+  height: 0.4rem;
+  width: 0.4rem;
+  display: inline-block;
+  background: url("../../assets/icon/tmall_icon.png");
+  background-size: cover;
 }
 .bottom-btn {
   bottom: 0px;
   position: absolute;
   width: 100%;
-  height: 42px;
-  line-height: 42px;
+  height: 0.9rem;
+  line-height: 0.9rem;
   color: #ffffff;
   background-color: #ff3030;
   text-align: center;

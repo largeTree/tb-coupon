@@ -35,6 +35,9 @@ export default {
   data() {
     return {
       title: "",
+      searchType: "q",
+      searchToken: "",
+      cat_id: "",
       couponData: {
         rows: [],
         maxPageNo: null,
@@ -69,17 +72,22 @@ export default {
       pageNo = pageNo || 1;
       pageSize = pageSize || 20;
       this.couponData.loading = true;
+      let jsonParam = {
+        sort: "tk_total_commi_desc",
+        hasCoupon: "true",
+        pageNo: pageNo,
+        pageSize: pageSize
+      };
+      if (this.searchType == "q") {
+        jsonParam.q = this.searchToken;
+      } else {
+        jsonParam.cat = this.searchToken;
+      }
       return MyHttpService.post("/api.do", {
         apiKey: "mp-common-call-tb-api",
         tbKey: "taobao.tbk.dg.material.optional",
         platform: "2",
-        jsonParam: {
-          q: this.title,
-          sort: "tk_total_commi_desc",
-          hasCoupon : 'true',
-          pageNo: pageNo,
-          pageSize: pageSize
-        }
+        jsonParam: jsonParam
       }).then(
         data => {
           if (pageNo == 1) {
@@ -148,19 +156,38 @@ export default {
           done(!hasMoreData);
         });
       });
-    }
-  },
-  created: function() {
-    if (this.$route.query.q) {
-      this.title = this.$route.query.q;
+    },
+    setTitle() {
+      let t = this.$route.query.t;
+      if (!t || t == null) {
+        t = "q";
+      }
+      if (t == "q") {
+        this.title = this.$route.query.q;
+      } else if (t == "c") {
+        this.title = this.$route.query.c_name;
+      }
     }
   },
   activated() {
-    console.log(this.$router);
-    // 判断一下q是否发生变更，如有变更，清理数据，重新加载
-    if (this.$route.query.q && this.$route.query.q !== this.title) {
+    // 设置标题
+    this.setTitle();
+    
+    // 刷新数据
+    let t = this.$route.query.t;
+    let q = this.$route.query.q;
+    if (!t || t == null) {
+      t = "q";
+    }
+    if (!q || q == null) {
+      this.clickBack();
+    }
+    if (q !== this.searchToken || t !== this.searchType) {
+      this.searchToken = q;
+      this.searchType = t;
+      // 判断一下q是否发生变更，如有变更，清理数据，重新加载
       this.couponData.rows = [];
-      this.title = this.$route.query.q;
+      // 加载优惠券
       this.loadCoupon(1, 20);
     }
     if (this.lastPosition) {

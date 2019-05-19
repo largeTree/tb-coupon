@@ -5,7 +5,7 @@
     </keep-alive>
     <tabbar v-if="showTabbar">
       <tabbar-item selected link="/">
-        <img slot="icon" src="./assets/logo.png">
+        <img slot="icon" src="./assets/tabs/home.png">
         <span slot="label">首页</span>
       </tabbar-item>
       <!-- <tabbar-item link="/tabs/recommend">

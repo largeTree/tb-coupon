@@ -27,7 +27,7 @@
         <!-- 九宫格 -->
         <!-- <grid :cols="4" class="spu-clz-grid">
           <grid-item :label="'九宫格'" v-for="i in 8" :key="i">
-            <img slot="icon" src="../assets/vux_logo.png">
+            <img slot="icon" src="../assets/tabs/home.png">
           </grid-item>
         </grid> -->
 
@@ -81,7 +81,8 @@ export default {
       this.$router.push({
         name: "SearchResult",
         query: {
-          q: this.searchToken
+          q: this.searchToken,
+          t: 'q'
         }
       });
     },
@@ -90,7 +91,6 @@ export default {
       this.$refs.myscroller.scrollTo(0, 0, true);
       setTimeout(() => {
         this.$refs.myscroller.scrollTo(0, 0, true);
-        console.log(this.$refs.myscroller.getPosition());
       }, 50);
     },
     loadCoupon(pageNo, pageSize) {
@@ -102,7 +102,7 @@ export default {
         tbKey: "taobao.tbk.dg.material.optional",
         platform: "2",
         jsonParam: {
-          q:'女装 裙子 仙女',
+          q:'ins 女装 裙子 仙女',
           sort: "tk_total_commi_desc",
           hasCoupon : 'true',
           pageNo: pageNo,
@@ -122,6 +122,7 @@ export default {
                 row.zkFinalPrice,
                 row.couponAmount
               );
+              row.shopDsr = (row.shopDsr / 10000).toFixed(2);
               row.remainCount = Math.ceil(NumberUtils.div(row.couponRemainCount, 100));
             }
             row._idx = idx + i;

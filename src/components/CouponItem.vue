@@ -12,16 +12,17 @@
 
     <!-- 有优惠券的显示折后价和券后价 -->
     <p v-show="item.couponId" class="price-con">
-      <del class="final-price">原价{{item.zkFinalPrice}}元</del>
+      <del class="item-final-price">原价{{item.zkFinalPrice}}元</del>
+      &nbsp;
       <span class="after-price">{{item.afterPrice || item.zkFinalPrice}}元</span>
     </p>
 
     <!-- 没有优惠券的，显示原价和现价 -->
     <p v-show="!item.couponId" class="price-con">
-      <del class="final-price">一口价{{item.reservePrice}}元</del>
+      <del class="item-final-price">一口价{{item.reservePrice}}元</del>
+      &nbsp;
       <span class="after-price">{{item.afterPrice || item.zkFinalPrice}}元</span>
     </p>
-    
     <p class="other-info">
       {{item.provcity}}
       <span class="fr">月销{{item.volume}}</span>
@@ -97,8 +98,8 @@ export default {
 .coupon-amount-price {
   border: 1px solid #fe4800;
   border-left: none;
-  line-height: 14px;
-  height: 14px;
+  line-height: 0.27rem;
+  height: 0.27rem;
   overflow: hidden;
   display: block;
   padding: 0 2px;
@@ -120,7 +121,7 @@ export default {
 .price-con {
   line-height: 0.5rem;
 }
-.final-price {
+.item-final-price {
   color: #cccccc;
   font-size: 0.24rem;
 }
