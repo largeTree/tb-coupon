@@ -22,14 +22,19 @@
         <!-- 滚动图 -->
         <!-- <swiper loop auto :list="swiperList"></swiper> -->
 
-        <!-- <divider>券分类</divider> -->
+        <divider>券分类</divider>
 
         <!-- 九宫格 -->
-        <!-- <grid :cols="4" class="spu-clz-grid">
-          <grid-item :label="'九宫格'" v-for="i in 8" :key="i">
+        <grid :cols="4" class="spu-clz-grid">
+          <grid-item
+            :label="item.name"
+            v-for="item in catList"
+            :key="item.id"
+            :link="'/searchresult?t=c&amp;q=' + item.id + '&amp;c_name=' + item.name"
+          >
             <img slot="icon" src="../assets/tabs/home.png">
           </grid-item>
-        </grid> -->
+        </grid>
 
         <divider>精选券</divider>
 
@@ -53,6 +58,41 @@ import { MyHttpService } from "../services/HttpService";
 import NumberUtils from "../services/NumberUtils";
 import { setTimeout } from "timers";
 
+let _catList = [
+  {
+    id: "16",
+    name: "女装"
+  },
+  {
+    id: "50006843",
+    name: "女鞋"
+  },
+  {
+    id: "50010788",
+    name: "彩妆"
+  },
+  {
+    id: "30",
+    name: "男装"
+  },
+  {
+    id: "50011740",
+    name: "流行男鞋"
+  },
+  {
+    id: "11",
+    name: "电脑硬件"
+  },
+  {
+    id: "50002766",
+    name: "零食特产"
+  },
+  {
+    id: "50013886",
+    name: "户外专区"
+  }
+];
+
 export default {
   components: {
     Search,
@@ -73,16 +113,20 @@ export default {
         rows: [],
         loading: false,
         hasMoreData: true
-      }
+      },
+      catList: _catList
     };
   },
   methods: {
+    catItemClick(catItem) {
+      console.log(catItem);
+    },
     onSubmit() {
       this.$router.push({
         name: "SearchResult",
         query: {
           q: this.searchToken,
-          t: 'q'
+          t: "q"
         }
       });
     },
@@ -102,9 +146,9 @@ export default {
         tbKey: "taobao.tbk.dg.material.optional",
         platform: "2",
         jsonParam: {
-          q:'ins 女装 裙子 仙女',
+          q: "ins 女装 裙子 仙女",
           sort: "tk_total_commi_desc",
-          hasCoupon : 'true',
+          hasCoupon: "true",
           pageNo: pageNo,
           pageSize: pageSize
         }
@@ -123,7 +167,9 @@ export default {
                 row.couponAmount
               );
               row.shopDsr = (row.shopDsr / 10000).toFixed(2);
-              row.remainCount = Math.ceil(NumberUtils.div(row.couponRemainCount, 100));
+              row.remainCount = Math.ceil(
+                NumberUtils.div(row.couponRemainCount, 100)
+              );
             }
             row._idx = idx + i;
             this.couponData.rows.push(row);
@@ -190,7 +236,7 @@ export default {
     this.lastPosition = this.$refs.myscroller.getPosition();
   },
   activated() {
-    this.searchToken = '';
+    this.searchToken = "";
     if (this.lastPosition) {
       setTimeout(() => {
         this.$refs.myscroller.scrollTo(
