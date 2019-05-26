@@ -1,6 +1,6 @@
 <template>
   <div class="body">
-    <x-header :left-options="{showBack: false}">首页</x-header>
+    <x-header :left-options="{showBack: false}">小瓶子</x-header>
     <view-box :body-padding-top="46" :body-padding-bottom="50">
       <scroller
         ref="myscroller"
@@ -19,6 +19,8 @@
           @on-submit="onSubmit"
         ></search>
 
+        <!-- 广告条 -->
+        <advbar msg="点击关注不迷路" :click="showQrCode"></advbar>
         <!-- 滚动图 -->
         <!-- <swiper loop auto :list="swiperList"></swiper> -->
 
@@ -31,8 +33,9 @@
             v-for="item in catList"
             :key="item.id"
             :link="'/searchresult?t=c&amp;q=' + item.id + '&amp;c_name=' + item.name"
+            class="spu-clz-item"
           >
-            <img slot="icon" src="../assets/tabs/home.png">
+            <img slot="icon" :src="item.icon">
           </grid-item>
         </grid>
 
@@ -47,53 +50,68 @@
       </scroller>
       <float-btn :on-click="floatBtnClick"></float-btn>
     </view-box>
+    <div v-transfer-dom>
+      <alert v-model="showQrCodeAlert" title="关注公众号"><img width="70%" height="70%" src="../assets/qrCode_8cm.jpg" /></alert>
+    </div>
   </div>
 </template>
 
 <script>
-import { Divider, Swiper, Search, Grid, GridItem, Card, XImg } from "vux";
+import { Divider, Swiper, Search, Grid, GridItem, Card, XImg, Alert, TransferDomDirective as TransferDom } from "vux";
 import CouponItem from "../components/CouponItem";
 import FloatBtn from "../components/FLoatBtn";
+import Advbar from "../components/Advbar";
 import { MyHttpService } from "../services/HttpService";
 import NumberUtils from "../services/NumberUtils";
-import { setTimeout } from "timers";
+import { setTimeout, setInterval } from "timers";
 
 let _catList = [
   {
     id: "16",
-    name: "女装"
+    name: "女装",
+    icon: "./static/cats_icon/w_wear.jpg"
   },
   {
     id: "50006843",
-    name: "女鞋"
+    name: "女鞋",
+    icon: "./static/cats_icon/w_shose.jpg"
   },
   {
     id: "50010788",
-    name: "彩妆"
+    name: "彩妆",
+    icon: "./static/cats_icon/cosmetics.jpg"
   },
   {
     id: "30",
-    name: "男装"
+    name: "男装",
+    icon: "./static/cats_icon/m_wear.jpg"
   },
   {
     id: "50011740",
-    name: "流行男鞋"
+    name: "流行男鞋",
+    icon: "./static/cats_icon/m_shose.jpg"
   },
   {
     id: "11",
-    name: "电脑硬件"
+    name: "电脑硬件",
+    icon: "./static/cats_icon/computer.jpg"
   },
   {
     id: "50002766",
-    name: "零食特产"
+    name: "零食特产",
+    icon: "./static/cats_icon/snacks.jpg"
   },
   {
     id: "50013886",
-    name: "户外专区"
+    name: "户外专区",
+    icon: "./static/cats_icon/outdoors.jpg"
   }
 ];
 
 export default {
+  directives: {
+    TransferDom
+  },
   components: {
     Search,
     Swiper,
@@ -103,7 +121,9 @@ export default {
     Card,
     XImg,
     CouponItem,
-    FloatBtn
+    FloatBtn,
+    Advbar,
+    Alert
   },
   data() {
     return {
@@ -114,10 +134,14 @@ export default {
         loading: false,
         hasMoreData: true
       },
-      catList: _catList
+      catList: _catList,
+      showQrCodeAlert: false
     };
   },
   methods: {
+    showQrCode() {
+      this.showQrCodeAlert = true;
+    },
     catItemClick(catItem) {
       console.log(catItem);
     },
@@ -260,11 +284,7 @@ export default {
 .spu-clz-grid {
   border-bottom: 1px #d9d9d9 solid;
 }
-.flex-demo {
-  text-align: center;
-  color: #fff;
-  background-color: #20b907;
-  border-radius: 4px;
-  background-clip: padding-box;
+.spu-clz-item {
+  background-color: #ffffff;
 }
 </style>
