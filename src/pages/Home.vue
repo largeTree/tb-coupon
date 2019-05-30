@@ -171,7 +171,7 @@ export default {
         platform: "2",
         jsonParam: {
           q: "ins 女装 裙子 仙女",
-          sort: "tk_total_commi_desc",
+          sort: "tk_total_commi_des",
           hasCoupon: "true",
           pageNo: pageNo,
           pageSize: pageSize

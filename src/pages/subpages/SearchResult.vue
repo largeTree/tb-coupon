@@ -73,7 +73,7 @@ export default {
       pageSize = pageSize || 20;
       this.couponData.loading = true;
       let jsonParam = {
-        sort: "tk_total_commi_desc",
+        sort: "tk_total_commi_des",
         hasCoupon: "true",
         pageNo: pageNo,
         pageSize: pageSize

@@ -77,5 +77,9 @@ export default {
   background-color: #f39d1d;
   color: #ffffff;
   text-align: center;
+  height: 0.6rem;
+  line-height: 0.6rem;
+  font-size: 0.3rem;
+  letter-spacing: 2px;
 }
 </style>
